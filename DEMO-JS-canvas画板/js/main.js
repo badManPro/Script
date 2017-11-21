@@ -1,5 +1,6 @@
 var yyy = document.getElementById('drawCanvas');
 var context = yyy.getContext('2d');
+var lineWidth = 5;
 
 //  设置画布尺寸(自适应)
 autoSetCanvasSize(yyy);
@@ -9,19 +10,71 @@ listenToUser(yyy);
 
 // 默认状态橡皮擦不启动
 var eraserEnabled = false;
+
+//  画笔启动状态
+
+pencil.onclick = function() {
+    eraserEnabled = false;
+    pencil.classList.add('active')
+    eraser.classList.remove('active')
+}
 // 橡皮擦启动函数
+/**********************************************/
 eraser.onclick = function() {
     eraserEnabled = true;
-    actions.className = 'actions x'
+    eraser.classList.add('active');
+    pencil.classList.remove('active');
 }
-//  画笔启动状态
-brush.onclick = function() {
-    eraserEnabled = false;
-    actions.className = 'actions';
+//  清空屏幕函数
+clear.onclick = function() {
+    context.clearRect(0, 0, yyy.width, yyy.height);
 }
-
-/**********************************************/
-
+//  下载按钮
+save.onclick = function() {
+    var url = yyy.toDataURL("image/png");
+    console.log(url);
+    var a = document.createElement('a');
+   
+    document.body.appendChild(a);
+    a.href = url;
+    a.download = '我的画板';
+    a.target = '_blank';
+    a.click();
+}
+//  颜色点击
+black.onclick = function() {
+    context.fillStyle = 'black';
+    context.strokeStyle = 'black';
+    black.classList.add('active');
+    red.classList.remove('active');
+    yellow.classList.remove('active');
+    green.classList.remove('active');
+}
+red.onclick = function() {
+    context.fillStyle = 'red';
+    context.strokeStyle = 'red';
+    black.classList.remove('active');
+    red.classList.add('active');
+    yellow.classList.remove('active');
+    green.classList.remove('active');
+    
+}
+yellow.onclick = function() {
+    context.fillStyle = 'yellow';
+    context.strokeStyle = 'yellow';
+    black.classList.remove('active');
+    red.classList.remove('active');
+    yellow.classList.add('active');
+    green.classList.remove('active');
+}
+green.onclick = function() {
+    context.fillStyle = 'green';
+    context.strokeStyle = 'green';
+    black.classList.remove('active');
+    red.classList.remove('active');
+    yellow.classList.remove('active');
+    green.classList.add('active');
+}
 
 //  自动调节大小 发生改变则会自动调整大小
 function autoSetCanvasSize(canvas) {
@@ -38,11 +91,15 @@ function autoSetCanvasSize(canvas) {
         canvas.height = pageHeight;
     }
 }
-
+thin.onclick = function() {
+    lineWidth = 5;
+}
+thick.onclick = function() {
+    lineWidth = 10;
+}
 // 画点
 function drawPoint(x, y, radius) {
     context.beginPath();
-    context.fillStyle = 'black';
     context.arc(x, y, radius, 0, Math.PI * 2);
     context.fill();
 }
@@ -50,9 +107,8 @@ function drawPoint(x, y, radius) {
 //  点与点之间连线（使得划线连贯）
 function drawLine(x1, y1, x2, y2) {
     context.beginPath();
-    context.strokeStyle = 'black';
     context.moveTo(x1, y1); //起点
-    context.lineWidth = 5;
+    context.lineWidth = lineWidth;
     context.lineTo(x2, y2); //终点
     context.stroke();
     context.closePath();
